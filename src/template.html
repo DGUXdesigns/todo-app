@@ -1,11 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <title>Focus Flow</title>
 </head>
+
 <body>
-    
+    <aside>
+        <div class="my-projects">
+            <div class="title-container">
+                <h1>My Projects</h1>
+                <button><i class="material-icons">add</i></button>
+            </div>
+
+            <ul class="project-list" data-projects>
+                <li>
+                    <i class="material-icons">incomplete_circle</i>
+                    <h3>Work</h3>
+                </li>
+                <li>
+                    <i class="material-icons">incomplete_circle</i>
+                    <h3>Family</h3>
+                </li>
+            </ul>
+
+            <form action="" data-new-project-form>
+                <input 
+                type="text" 
+                class="new-project"
+                data-new-project-input 
+                placeholder="New Project" 
+                aria-label="Name">
+            </form>
+        </div>
+    </aside>
+
+    <main>
+        <div class="project-info">
+            <h2>Work</h2>
+            <p>2 Task Remaining</p>
+        </div>
+
+        <hr>
+
+        <div class="task-grid">
+            <div class="task-card" id="high">
+                <div class="card-header">
+                    <div class="left">
+                        <h3 class="task-title">Launch New Marketing Campaign</h3>
+                        <h3 class="due-date">Jan 01</h3>
+                    </div>
+                    <p class="priority" style="color: red;">High</p>
+                </div>
+
+                <div class="description">
+                    <p>Prepare and execute a digital marketing campaign to promote the new product line, targeting key
+                        demographics through social media and email outreach.</p>
+                </div>
+
+                <div class="checklist">
+                    <div class="list-item">
+                        <input type="checkbox" id="item-1">
+                        <label for="item-1">
+                            <span class="custom-checkbox"></span>
+                            Finalize campaign graphics
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-2">
+                        <label for="item-2">
+                            <span class="custom-checkbox"></span>
+                            Draft and schedule email newsletters
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-3">
+                        <label for="item-3">
+                            <span class="custom-checkbox"></span>
+                            Set up social media ad targeting
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-4">
+                        <label for="item-4">
+                            <span class="custom-checkbox"></span>
+                            Monitor initial engagement metrics
+                        </label>
+                    </div>
+
+                    <div class="new-item-creator">
+                        <form action="">
+                            <input type="text" class="new-item" placeholder="New item" aria-label="Name">
+                        </form>
+                    </div>
+
+                    <div class="button-container">
+                        <button><i class="material-icons">format_list_bulleted_add</i></button>
+                        <button><i class="material-icons">edit</i></button>
+                        <button><i class="material-icons">delete</i></button>
+                        <button><i class="material-icons">assignment_turned_in</i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-card" id="medium">
+                <div class="card-header">
+                    <div class="left">
+                        <h3 class="task-title">Prepare Q1 Financial Report</h3>
+                        <h3 class="due-date">Feb 05</h3>
+                    </div>
+                    <p class="priority">Medium</p>
+                </div>
+
+                <div class="description">
+                    <p>Compile and analyze the financial performance of the company for the first quarter to present to
+                        stakeholders during the quarterly meeting.</p>
+                </div>
+
+                <div class="checklist">
+                    <div class="list-item">
+                        <input type="checkbox" id="item-11">
+                        <label for="item-11">
+                            <span class="custom-checkbox"></span>
+                            Gather financial data
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-22">
+                        <label for="item-22">
+                            <span class="custom-checkbox"></span>
+                            Analyze performance trends
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-33">
+                        <label for="item-33">
+                            <span class="custom-checkbox"></span>
+                            Prepare presentation slides
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-44">
+                        <label for="item-44">
+                            <span class="custom-checkbox"></span>
+                            Review with department heads
+                        </label>
+                    </div>
+
+                    <div class="list-item">
+                        <input type="checkbox" id="item-55">
+                        <label for="item-55">
+                            <span class="custom-checkbox"></span>
+                            Submit finalized report
+                        </label>
+                    </div>
+
+                    <div class="new-item-creator">
+                        <form action="">
+                            <input type="text" class="new-item" placeholder="New item" aria-label="Name">
+                        </form>
+                    </div>
+
+                    <div class="button-container">
+                        <button><i class="material-icons">format_list_bulleted_add</i></button>
+                        <button><i class="material-icons">edit</i></button>
+                        <button><i class="material-icons">delete</i></button>
+                        <button><i class="material-icons">assignment_turned_in</i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+
 </body>
+
 </html>
