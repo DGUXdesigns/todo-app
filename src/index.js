@@ -34,12 +34,8 @@ if (savedProjects) {
     });
 }
 
-// Log loaded projects to confirm correct loading
-console.log('Loaded Projects:', myProjects.getProjects());
-
 // Start Rendering
 const projectList = new RenderProjectList('[data-projects]', new RenderDisplay('[data-main]'));
-
 
 // Render the loaded projects
 projectList.renderList(myProjects.getProjects());
@@ -57,6 +53,5 @@ new FormHandler(
 
 // Save data when a project or task changes
 window.addEventListener('beforeunload', () => {
-    console.log('Saving projects before unload:', myProjects.getProjects());
     storage.save(myProjects.getProjects());
 });
