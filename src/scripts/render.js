@@ -76,7 +76,7 @@ export class RenderDisplay {
         // Card header content
         const leftSection = createElement('div', 'left', null);
         const taskTitle = createElement('h3', 'task-title', task.title);
-        const dueDate = createElement('h3', 'due-date', task.dueDate);
+        const dueDate = createElement('h3', 'due-date', format(new Date(task.date), 'MMM dd'));
 
         leftSection.appendChild(taskTitle);
         leftSection.appendChild(dueDate);
