@@ -4,13 +4,22 @@ export class Storage {
     }
 
     save(data) {
-        localStorage.setItem(this.key, JSON.stringify(data));
+        try {
+            localStorage.setItem(this.key, JSON.stringify(data));
+        } catch (e) {
+            console.error('Could not save to local storage', error);
+        }
     }
 
     load() {
-        if (localStorage.getItem(this.key)) {
-            return JSON.parse(localStorage.getItem(this.key));
-        } else {
+        try {
+            if (localStorage.getItem(this.key)) {
+                return JSON.parse(localStorage.getItem(this.key));
+            } else {
+                return null;
+            }
+        } catch(e) {
+            console.error('Error loading from localStorage:', error);
             return null;
         }
     }
