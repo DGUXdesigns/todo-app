@@ -34,6 +34,7 @@ export class RenderProjectList {
 
         this.renderDisplay.renderMain(project);
     }
+
 }
 
 export class RenderDisplay {
@@ -81,7 +82,26 @@ export class RenderDisplay {
         leftSection.appendChild(taskTitle);
         leftSection.appendChild(dueDate);
 
+
+
         const priority = createElement('p', 'priority', task.priority);
+
+        if (task.priority === 'High') {
+            priority.style.color = 'rgb(255, 165, 0)';
+            taskCard.style.borderLeft = '10px solid rgba(255, 165, 0, 0.4)';
+        }
+
+        if (task.priority === 'Medium') {
+            priority.style.color = 'rgb(255, 255, 0)';
+            taskCard.style.borderLeft = '10px solid rgba(255, 255, 0, 0.4)';
+        }
+
+        if (task.priority === 'Low') {
+            priority.style.color = 'rgb(0, 212, 0)';
+            taskCard.style.borderLeft = '10px solid rgba(0, 212, 0, 0.4)';
+        }
+
+        
         cardHeader.appendChild(leftSection);
         cardHeader.appendChild(priority);
 
