@@ -46,11 +46,9 @@ export class RenderDisplay {
         this.container.innerHTML = '';
 
         const infoDiv = this.createMainHeader(project);
-        const lineBreak = document.createElement('hr');
         const taskGrid = createElement('div', 'task-grid', null);
 
         this.container.appendChild(infoDiv);
-        this.container.appendChild(lineBreak);
         this.container.appendChild(taskGrid);
 
         project.tasks.forEach((task, index) => {
@@ -63,12 +61,43 @@ export class RenderDisplay {
         const infoDiv = createElement('div', 'project-info', null);
         const projectTitle = createElement('h2', null, `${project.name}`);
         const taskCount = createElement('p', 'task-count', `${project.tasks.length} Task${project.tasks.length !== 1 ? 's' : ''} Remaining`);
+        const infoContainer = createElement('div', 'info-container', null);
 
-        infoDiv.appendChild(projectTitle);
-        infoDiv.appendChild(taskCount);
+        const buttonWrapper = this.createButtonWrapper();
+
+        infoContainer.appendChild(projectTitle);
+        infoContainer.appendChild(taskCount);
+        infoDiv.appendChild(infoContainer);
+        infoDiv.appendChild(buttonWrapper);
 
         return infoDiv;
     }
+
+    createButtonWrapper() {
+        const buttonWrapper = createElement('div', 'button-wrapper', null);
+    
+        // Define the buttons and their icons
+        const buttons = [
+            { icon: 'edit', action: 'edit', text: 'Edit Project' },
+            { icon: 'delete', action: 'delete', text: 'Delete Project' },
+        ];
+    
+        // Create buttons and append them to the container
+        buttons.forEach(buttonInfo => {
+            const button = createElement('button', 'project-button', buttonInfo.text);
+            button.setAttribute('data-action', buttonInfo.action); // Optional, for identifying the button's purpose
+    
+            const icon = createElement('i', 'material-icons', buttonInfo.icon);
+            button.prepend(icon);
+
+    
+            buttonWrapper.appendChild(button);
+        });
+    
+        return buttonWrapper;
+    }
+
+
 
     createTaskCard(task, taskIndex) {
         const taskCard = createElement('div', 'task-card', null);
