@@ -21,7 +21,6 @@ export class Project {
     constructor(name, projectLibrary) {
         this.name = this.capitalize(name);
         this.tasks = [];
-
         projectLibrary.addNewProject(this);
     }
 
@@ -32,15 +31,6 @@ export class Project {
             .split(" ")
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
-    }
-
-    // Getter and Setter for `name`
-    get name() {
-        return this._name;
-    }
-
-    set name(value) {
-        this._name = this.capitalize(value);
     }
 
     addTask(task) {
