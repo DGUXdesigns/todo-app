@@ -13,13 +13,10 @@ export class Storage {
 
     load() {
         try {
-            if (localStorage.getItem(this.key)) {
-                return JSON.parse(localStorage.getItem(this.key));
-            } else {
-                return null;
-            }
-        } catch(e) {
-            console.error('Error loading from localStorage:', error);
+            const savedData = localStorage.getItem(this.key);
+            return savedData ? JSON.parse(savedData) : null;  // Return the saved data if available
+        } catch (e) {
+            console.error('Error loading from localStorage:', e);
             return null;
         }
     }
