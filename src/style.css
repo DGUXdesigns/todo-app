@@ -93,6 +93,13 @@ li:hover {
     }
 }
 
+.active-project {
+    font-weight: 700;
+    i {
+        color: var(--accent-secondary);
+    }
+}
+
 /* form */
 aside form {
     display: flex;
@@ -125,7 +132,6 @@ aside form {
 }
 
 /* main styling */
-
 main {
     padding: 1rem 0;
     display: flex;
@@ -159,14 +165,6 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-#high {
-    border-left: 10px solid red;
-}
-
-#medium {
-    border-left: 10px solid orange;
 }
 
 .left {
