@@ -1,4 +1,4 @@
-import { Project } from "./taskSystem";
+import { Project, ProjectLibrary } from "./taskSystem";
 
 export class FormHandler {
     constructor(formSelector, inputSelector, formContainerSelector, addButtonSelector, projectLibrary, renderProjectList, storage) {
@@ -32,10 +32,12 @@ export class FormHandler {
         event.preventDefault();
     
         const projectName = this.input.value.trim();
+        if (!projectName) return;
+
         if (projectName) {
             // Create a new project and add it to the project library
-            const newProject = new Project(projectName, this.projectLibrary); // Project is added via constructor
-            console.table('Projects before rendering:', this.projectLibrary.getProjects());
+            const newProject = new Project(projectName, this.projectLibrary);
+            this.projectLibrary.addNewProject(newProject);
     
             // Save the updated projects to localStorage
             this.storage.save(this.projectLibrary.getProjects());
