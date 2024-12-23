@@ -1,3 +1,5 @@
+import { Storage } from "./storage";
+
 export class ProjectLibrary {
     constructor() {
         this.projects = [];
@@ -7,8 +9,9 @@ export class ProjectLibrary {
         this.projects.push(project);
     }
 
-    deleteProject(index) {
-        this.projects.splice(index, 1);
+    deleteProject(project) {
+        const projectIndex = this.projects.indexOf(project);
+        this.projects.splice(projectIndex, 1);
     }
 
     getProjects() {
@@ -18,10 +21,9 @@ export class ProjectLibrary {
 
 
 export class Project {
-    constructor(name, projectLibrary) {
+    constructor(name) {
         this.name = this.capitalize(name);
         this.tasks = [];
-        projectLibrary.addNewProject(this);
     }
 
     // Method to capitalize the first letter of each word
