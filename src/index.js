@@ -5,8 +5,8 @@ import { RenderProjectList, RenderDisplay } from './scripts/render';
 import { FormHandler } from './scripts/FormHandler';
 
 // Initialize
-const LOCAL_STORAGE_PROJECT_KEY = 'myProjects';
-const storage = new Storage(LOCAL_STORAGE_PROJECT_KEY);
+const LOCAL_STORAGE_KEY = 'myProjects';
+const storage = new Storage(LOCAL_STORAGE_KEY);
 const myProjects = new ProjectLibrary();
 
 // Load existing projects from localStorage
@@ -15,6 +15,8 @@ if (savedProjects) {
     savedProjects.forEach(savedProject => {
         if (savedProject && savedProject.name) {
             const project = new Project(savedProject.name, myProjects);
+            myProjects.addNewProject(project);
+
             savedProject.tasks.forEach(savedTask => {
                 new Task(
                     savedTask.title,
@@ -35,7 +37,7 @@ if (savedProjects) {
 }
 
 // Start Rendering
-const projectList = new RenderProjectList('[data-projects]', new RenderDisplay('[data-main]'));
+const projectList = new RenderProjectList('[data-projects]', new RenderDisplay('[data-main]'), myProjects);
 
 // Render the loaded projects
 projectList.renderList(myProjects.getProjects());
