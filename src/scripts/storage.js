@@ -7,7 +7,7 @@ export class Storage {
         try {
             localStorage.setItem(this.key, JSON.stringify(data));
         } catch (e) {
-            console.error('Could not save to local storage', error);
+            console.error('Could not save to local storage', e);
         }
     }
 
