@@ -39,8 +39,9 @@ aside {
     border-radius: 1rem;
 }
 
-aside button,
-.button-container button {
+.add,
+.button-container button,
+.delete-button {
     height: 2.5rem;
     width: 2.5rem;
     display: flex;
@@ -53,7 +54,7 @@ aside button,
     transition: all 0.3s ease;
 }
 
-aside button:hover,
+.add:hover,
 .button-container button:hover {
     background-color: var(--primary);
     transform: scale(1.2);
@@ -89,14 +90,14 @@ li {
 
 li:hover {
     background-color: var(--primary);
-    i {
+    .project-icon {
         color: var(--accent-secondary);
     }
 }
 
 .active-project {
     font-weight: 700;
-    i {
+    .project-icon {
         color: var(--accent-secondary);
     }
 }
@@ -189,6 +190,9 @@ main {
 
 .delete-button:hover {
     background: var(--secondary);
+    i {
+        color: var(--accent-secondary);
+    }
 }
 
 .project-info p {
