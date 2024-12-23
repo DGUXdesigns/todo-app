@@ -69,6 +69,12 @@ aside {
     gap: 0.5rem;
 }
 
+aside ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
 .title-container,
 li {
     display: flex;
@@ -83,7 +89,7 @@ li {
     display: flex;
     gap: 0.75rem;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0 0.25rem;
     border-radius: 0.5rem;
     transition: all 0.3s ease;
 }
@@ -185,11 +191,11 @@ main {
 
 .delete-button {
     margin-left: auto;
-    background: var(--secondary);
+    background: none;
 }
 
 .delete-button:hover {
-    background: var(--secondary);
+    transform: scale(1.2);
     i {
         color: var(--accent-secondary);
     }
