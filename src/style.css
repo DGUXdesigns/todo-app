@@ -23,7 +23,7 @@ body {
     background-color: var(--primary);
     padding: 1rem;
     height: 100vh;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 /* Sidebar */
@@ -33,8 +33,8 @@ aside {
     flex-direction: column;
     gap: 1.5rem;
     background-color: #242424;
-    min-width: 250px;
-    max-width: 300px;
+    min-width: 275px;
+    max-width: 400px;
     padding: 1rem;
     border-radius: 1rem;
 }
@@ -79,6 +79,7 @@ li {
 }
 
 li {
+    display: flex;
     gap: 0.75rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -101,8 +102,10 @@ li:hover {
 }
 
 /* form */
+
 aside form {
     display: flex;
+    width: 100%;
 }
 
 .new-project,
@@ -123,7 +126,8 @@ aside form {
 }
 
 .new-project {
-    margin: 0.5rem;
+    margin: 0.5rem 0;
+    width: 100%;
 }
 
 .new-project:focus,
@@ -133,7 +137,7 @@ aside form {
 
 /* main styling */
 main {
-    padding: 1rem 0;
+
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -141,9 +145,50 @@ main {
 
 .project-info {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     gap: 0.25rem;
-    margin-bottom: 0.75rem;
+    border-radius: 1rem;
+    background-color: var(--secondary);
+    padding: 1rem;
+}
+
+.button-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.project-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    font-weight: bold;
+    gap: 0.5rem;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.project-button:hover {
+    background-color: var(--primary);
+    transform: scale(1.1);
+    i {
+        color: var(--accent-secondary);
+    }
+}
+
+.delete-button {
+    margin-left: auto;
+    background: var(--secondary);
+}
+
+.delete-button:hover {
+    background: var(--secondary);
 }
 
 .project-info p {
