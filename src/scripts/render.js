@@ -1,9 +1,10 @@
 import { format } from "date-fns";
 
 export class RenderProjectList {
-    constructor(listContainer, renderDisplay) {
+    constructor(listContainer, renderDisplay, projectLibrary) {
         this.container = document.querySelector(listContainer);
         this.renderDisplay = renderDisplay;
+        this.projectLibrary = projectLibrary;
     }
 
     renderList(project) {
@@ -14,13 +15,28 @@ export class RenderProjectList {
             listElement.classList.add('list-name');
             listElement.innerHTML = project.name;
 
-            const icon = createIcon('incomplete_circle');
+            const icon = createIcon('blur_on');
+            icon.classList.add('project-icon');
             listElement.prepend(icon);
 
             listElement.addEventListener('click', () => {
                 this.handleSelection(project, listElement);
             });
 
+            // Add delete button
+            const deleteButton = createElement('button', 'delete-button', null);
+            deleteButton.setAttribute('data-action', 'delete');
+
+            const deleteIcon = createElement('i', 'material-icons', 'delete');
+            deleteButton.prepend(deleteIcon);
+
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent triggering selection when deleting
+                this.handleDeleteProject(project);
+            });
+
+
+            listElement.appendChild(deleteButton);
             this.container.appendChild(listElement);
         });
     }
@@ -35,15 +51,33 @@ export class RenderProjectList {
         this.renderDisplay.renderMain(project);
     }
 
+
+
+    handleDeleteProject(project) {
+        // Delete the project from the library
+        this.projectLibrary.deleteProject(project);
+
+        // this.storage.save(this.projectLibrary.getProjects());
+        // Re-render the project list
+        this.renderList(this.projectLibrary.getProjects());
+
+        // Clear the main display if the deleted project is active
+        if (this.renderDisplay.currentProject && this.renderDisplay.currentProject.name === project.name) {
+            this.renderDisplay.clearDisplay();
+        }
+    }
 }
 
 export class RenderDisplay {
     constructor(displayContainer) {
         this.container = document.querySelector(displayContainer);
+        this.currentProject = null;
     }
 
     renderMain(project) {
         this.container.innerHTML = '';
+
+        this.currentProject = project;
 
         const infoDiv = this.createMainHeader(project);
         const taskGrid = createElement('div', 'task-grid', null);
@@ -75,29 +109,26 @@ export class RenderDisplay {
 
     createButtonWrapper() {
         const buttonWrapper = createElement('div', 'button-wrapper', null);
-    
+
         // Define the buttons and their icons
         const buttons = [
             { icon: 'edit', action: 'edit', text: 'Edit Project' },
             { icon: 'delete', action: 'delete', text: 'Delete Project' },
         ];
-    
+
         // Create buttons and append them to the container
         buttons.forEach(buttonInfo => {
             const button = createElement('button', 'project-button', buttonInfo.text);
             button.setAttribute('data-action', buttonInfo.action); // Optional, for identifying the button's purpose
-    
+
             const icon = createElement('i', 'material-icons', buttonInfo.icon);
             button.prepend(icon);
 
-    
             buttonWrapper.appendChild(button);
         });
-    
+
         return buttonWrapper;
     }
-
-
 
     createTaskCard(task, taskIndex) {
         const taskCard = createElement('div', 'task-card', null);
@@ -130,7 +161,7 @@ export class RenderDisplay {
             taskCard.style.borderLeft = '10px solid rgba(0, 212, 0, 0.4)';
         }
 
-        
+
         cardHeader.appendChild(leftSection);
         cardHeader.appendChild(priority);
 
@@ -165,27 +196,17 @@ export class RenderDisplay {
             checklistContainer.appendChild(listItem);
         })
 
-        // Add new-item-creator
-        // const newItemCreator = createElement('div', 'new-item-creator', null);
-        // const form = document.createElement('form');
-        // const input = createElement('input', 'new-item', null);
-        // input.type = 'text';
-        // input.placeholder = 'New item';
-        // input.setAttribute('aria-label', 'Name');
-        // form.appendChild(input);
-        // newItemCreator.appendChild(form);
-        // checklistContainer.appendChild(newItemCreator);
         taskCard.appendChild(checklistContainer);
 
         const buttonContainer = this.createButtonContainer();
         taskCard.appendChild(buttonContainer);
-        
+
         return taskCard;
     }
 
     createButtonContainer() {
         const buttonContainer = createElement('div', 'button-container', null);
-    
+
         // Define the buttons and their icons
         const buttons = [
             { icon: 'format_list_bulleted_add', action: 'add' },
@@ -193,21 +214,24 @@ export class RenderDisplay {
             { icon: 'delete', action: 'delete' },
             { icon: 'assignment_turned_in', action: 'complete' }
         ];
-    
+
         // Create buttons and append them to the container
         buttons.forEach(buttonInfo => {
             const button = document.createElement('button');
             button.setAttribute('data-action', buttonInfo.action); // Optional, for identifying the button's purpose
-    
+
             const icon = createElement('i', 'material-icons', buttonInfo.icon);
             button.appendChild(icon);
-    
+
             buttonContainer.appendChild(button);
         });
-    
+
         return buttonContainer;
     }
 
+    clearDisplay() {
+        this.container.innerHTML = '';
+    }
 }
 
 function createElement(element, className, innerText) {
