@@ -1,5 +1,3 @@
-import { Storage } from "./storage";
-
 export class ProjectLibrary {
     constructor() {
         this.projects = [];
@@ -19,20 +17,10 @@ export class ProjectLibrary {
     }
 }
 
-
 export class Project {
     constructor(name) {
-        this.name = this.capitalize(name);
+        this.name = capitalize(name);
         this.tasks = [];
-    }
-
-    // Method to capitalize the first letter of each word
-    capitalize(name) {
-        return name
-            .trim()
-            .split(" ")
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
     }
 
     addTask(task) {
@@ -46,7 +34,7 @@ export class Project {
 
 export class Task {
     constructor(title, priority, date, description, tag, checklist = [], project, completed = false) {
-        this.title = title;
+        this.title = capitalize(title);
         this.priority = priority;
         this.date = date;
         this.description = description;
@@ -67,4 +55,13 @@ export class Task {
     addListItem(item) {
         this.checklist.push(item);
     }
+}
+
+// Method to capitalize the first letter of each word
+function capitalize(name) {
+    return name
+        .trim()
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
 }
