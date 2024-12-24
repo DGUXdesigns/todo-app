@@ -311,10 +311,16 @@ export class RenderDisplay {
         taskCard.appendChild(description);
 
         // Checklist Section
+        const checklistWrapper = createElement('div', 'checklist-wrapper', null);
+        const checklistTitle = createElement('h3', 'checklist-title', 'Things to do:');
         const checklistContainer = createElement('div', 'checklist', null);
+
+        checklistWrapper.appendChild(checklistTitle);
+        checklistWrapper.appendChild(checklistContainer);
+
         this.renderChecklist(task, checklistContainer, taskIndex);
 
-        taskCard.appendChild(checklistContainer);
+        taskCard.appendChild(checklistWrapper);
 
         const cardFooter = this.createCardFooter(task, taskCard);
         taskCard.appendChild(cardFooter);
@@ -390,19 +396,19 @@ export class RenderDisplay {
             return;
         }
 
+        if (checklistContainer.querySelector('.placeholder')) {
+            checklistContainer.innerHTML = '';
+        }
+
         const form = createElement('form', 'checklist-form', null);
         const inputField = this.createInputField('new-item', 'Add an item...', 'text', true);
-    
-        // Add buttons to the form
-        const addButton = createElement('button', 'add-checklist-btn', 'Add');
-        addButton.type = 'submit';
+
     
         const cancelButton = createElement('button', 'cancel-checklist-btn', 'Cancel');
         cancelButton.type = 'button';
     
         // Append input and buttons to the form
         form.appendChild(inputField);
-        form.appendChild(addButton);
         form.appendChild(cancelButton);
     
         checklistContainer.appendChild(form);
@@ -429,6 +435,12 @@ export class RenderDisplay {
     
     renderChecklist(task, checklistContainer, taskIndex) {
         checklistContainer.innerHTML = '';
+
+        if (task.checklist.length === 0) {
+            const placeholderText = createElement('p', 'placeholder', 'Nothing to do here... yet');
+            placeholderText.style.color = 'var(--txt-secondary)';
+            checklistContainer.appendChild(placeholderText);
+        }
     
         task.checklist.forEach((item, index) => {
             const listItem = createElement('div', 'list-item', null)
