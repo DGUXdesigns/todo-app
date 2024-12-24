@@ -200,7 +200,7 @@ export class RenderDisplay {
         addButton.value = 'confirm';
         addButton.addEventListener('click', (event) => {
             event.preventDefault();
-    
+
             // Gather the task data
             const taskTitle = taskTitleInput.value.trim();
             const taskPriority = taskPrioritySelect.value;
@@ -208,32 +208,30 @@ export class RenderDisplay {
             const taskDescription = taskDescriptionTextarea.value.trim();
             const taskTag = this.currentProject.name;
 
-            const capitalizeFirstWord = (text) => {
-                return text.charAt(0).toUpperCase() + text.slice(1);
-            };
-            
             const capitalizedDescription = capitalizeFirstWord(taskDescription);
-    
+
             // Make sure all required fields are filled
             if (!taskTitle) {
                 alert("Please add a Title");
                 return;
             }
-    
+
+
             // Create the new task for the current project
             const newTask = new Task(
                 taskTitle,
                 taskPriority,
                 taskDate,
                 capitalizedDescription,
-                taskTag, // Tag can be added later
-                [], // Checklist can be added later
-                this.currentProject // Pass the current project
+                taskTag,
+                [],
+                this.currentProject
             );
-    
+
+
             // Re-render the tasks for the current project
             this.renderMain(this.currentProject);
-    
+
             // Close the dialog
             taskDialog.close();
         });
@@ -291,38 +289,21 @@ export class RenderDisplay {
         // Card header content
         const leftSection = createElement('div', 'left', null);
         const taskTitle = createElement('h3', 'task-title', task.title);
-        const dueDate = createElement('h3', 'due-date', format(new Date(task.date), 'MMM dd'));
+
+        // Check if the task is overdue
+        const dueDateText = task.date
+            ? (task.isOverdue() ? 'Past Due!' : format(new Date(task.date), 'MMM dd, yyyy'))
+            : 'No Rush';
+        const dueDate = createElement('h3', 'due-date', dueDateText);
+
+        if (task.isOverdue()) {
+            dueDate.style.color = 'orange'; 
+        }
 
         leftSection.appendChild(taskTitle);
-        leftSection.appendChild(dueDate);
-
-
-
-        const priority = createElement('p', 'priority', task.priority);
-
-        if (task.priority === 'High') {
-            priority.style.color = 'rgb(255, 165, 0)';
-            taskCard.style.borderLeft = '10px solid rgba(255, 165, 0, 0.4)';
-        }
-
-        if (task.priority === 'Medium') {
-            priority.style.color = 'rgb(255, 255, 0)';
-            taskCard.style.borderLeft = '10px solid rgba(255, 255, 0, 0.4)';
-        }
-
-        if (task.priority === 'Low') {
-            priority.style.color = 'rgb(0, 212, 0)';
-            taskCard.style.borderLeft = '10px solid rgba(0, 212, 0, 0.4)';
-        }
-
-        if (task.priority === 'None') {
-            priority.style.color = 'rgba(255, 255, 255, 0.7)';
-            priority.style.display = 'none';
-        }
-
-
         cardHeader.appendChild(leftSection);
-        cardHeader.appendChild(priority);
+        cardHeader.appendChild(dueDate)
+
 
         taskCard.appendChild(cardHeader);
 
@@ -357,13 +338,45 @@ export class RenderDisplay {
 
         taskCard.appendChild(checklistContainer);
 
-        const buttonContainer = this.createButtonContainer();
-        taskCard.appendChild(buttonContainer);
+        const cardFooter = this.createCardFooter(task, taskCard);
+        taskCard.appendChild(cardFooter);
 
         return taskCard;
     }
 
-    createButtonContainer() {
+    createCardFooter(task, taskCard) {
+        const footer = createElement('div', 'card-footer', null);
+        const buttonContainer = this.createButtonContainer(task, taskCard);
+        const priority = createElement('p', 'priority', task.priority);
+
+        if (task.priority === 'High') {
+            priority.style.color = 'rgb(255, 165, 0)';
+            taskCard.style.borderTop = '12px solid rgba(255, 165, 0, 0.4)';
+        }
+
+        if (task.priority === 'Medium') {
+            priority.style.color = 'rgb(255, 255, 0)';
+            taskCard.style.borderTop = '12px solid rgba(255, 255, 0, 0.4)';
+        }
+
+        if (task.priority === 'Low') {
+            priority.style.color = 'rgb(0, 212, 0)';
+            taskCard.style.borderTop = '12px solid rgba(0, 212, 0, 0.4)';
+        }
+
+        if (task.priority === 'None') {
+            priority.style.color = 'rgba(255, 255, 255, 0.7)';
+            taskCard.style.borderTop = '12px solid transparent'
+            priority.style.display = 'none';
+        }
+
+        footer.appendChild(buttonContainer);
+        footer.prepend(priority);
+
+        return footer;
+    }
+
+    createButtonContainer(task, taskCard) {
         const buttonContainer = createElement('div', 'button-container', null);
 
         // Define the buttons and their icons
@@ -377,15 +390,85 @@ export class RenderDisplay {
         // Create buttons and append them to the container
         buttons.forEach(buttonInfo => {
             const button = document.createElement('button');
-            button.setAttribute('data-action', buttonInfo.action); // Optional, for identifying the button's purpose
-
+            button.setAttribute('data-action', buttonInfo.action);
+    
             const icon = createElement('i', 'material-icons', buttonInfo.icon);
             button.appendChild(icon);
-
+    
+            if (buttonInfo.action === 'add') {
+                button.addEventListener('click', () => {
+                    this.createChecklistForm(task, taskCard.querySelector('.checklist'));
+                });
+            }
+    
             buttonContainer.appendChild(button);
         });
 
         return buttonContainer;
+    }
+
+    createChecklistForm(task, checklistContainer) {
+        const form = createElement('form', 'checklist-form', null);
+        const inputField = this.createInputField('new-item', 'Add an item...', 'text', true);
+    
+        // Add buttons to the form
+        const addButton = createElement('button', 'add-checklist-btn', 'Add');
+        addButton.type = 'submit';
+    
+        const cancelButton = createElement('button', 'cancel-checklist-btn', 'Cancel');
+        cancelButton.type = 'button';
+    
+        // Append input and buttons to the form
+        form.appendChild(inputField);
+        form.appendChild(addButton);
+        form.appendChild(cancelButton);
+    
+        checklistContainer.appendChild(form);
+    
+        // Add event listeners
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const itemName = capitalizeFirstWord(inputField.value.trim());
+    
+            if (itemName) {
+                // Add the item to the task checklist
+                task.checklist.push(itemName);
+    
+                // Re-render the checklist
+                this.renderChecklist(task, checklistContainer);
+            }
+        });
+    
+        cancelButton.addEventListener('click', () => {
+            // Re-render the checklist without the form
+            this.renderChecklist(task, checklistContainer);
+        });
+    }
+    
+    renderChecklist(task, checklistContainer) {
+        checklistContainer.innerHTML = '';
+    
+        task.checklist.forEach((item, index) => {
+            const listItem = createElement('div', 'list-item', null);
+    
+            const checkboxId = `task-${index}-item-${index}`;
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = checkboxId;
+    
+            const label = document.createElement('label');
+            label.setAttribute('for', checkboxId);
+    
+            const customCheckbox = createElement('span', 'custom-checkbox', null);
+            label.appendChild(customCheckbox);
+    
+            const labelText = document.createTextNode(item);
+            label.appendChild(labelText);
+    
+            listItem.appendChild(checkbox);
+            listItem.appendChild(label);
+            checklistContainer.appendChild(listItem);
+        });
     }
 
     clearDisplay() {
@@ -406,4 +489,8 @@ function createIcon(iconName) {
     icon.innerText = iconName;
 
     return icon;
+}
+
+function capitalizeFirstWord(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
 }
