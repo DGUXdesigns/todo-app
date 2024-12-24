@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { Task } from "./taskSystem";
 
 export class RenderProjectList {
     constructor(listContainer, renderDisplay, projectLibrary) {
@@ -51,8 +52,6 @@ export class RenderProjectList {
         this.renderDisplay.renderMain(project);
     }
 
-
-
     handleDeleteProject(project) {
         // Delete the project from the library
         this.projectLibrary.deleteProject(project);
@@ -81,9 +80,11 @@ export class RenderDisplay {
 
         const infoDiv = this.createMainHeader(project);
         const taskGrid = createElement('div', 'task-grid', null);
+        const dialog = this.createTaskDialog();
 
         this.container.appendChild(infoDiv);
         this.container.appendChild(taskGrid);
+        this.container.appendChild(dialog);
 
         project.tasks.forEach((task, index) => {
             const taskCard = this.createTaskCard(task, index);
@@ -110,24 +111,177 @@ export class RenderDisplay {
     createButtonWrapper() {
         const buttonWrapper = createElement('div', 'button-wrapper', null);
 
-        // Define the buttons and their icons
-        const buttons = [
-            { icon: 'edit', action: 'edit', text: 'Edit Project' },
-            { icon: 'delete', action: 'delete', text: 'Delete Project' },
-        ];
+        // Add button
+        const TaskDialogButton = createElement('button', 'add-task-btn', 'Add Task');
+        TaskDialogButton.setAttribute('data-action', 'add Task');
 
-        // Create buttons and append them to the container
-        buttons.forEach(buttonInfo => {
-            const button = createElement('button', 'project-button', buttonInfo.text);
-            button.setAttribute('data-action', buttonInfo.action); // Optional, for identifying the button's purpose
+        const addIcon = createElement('i', 'material-icons', 'add_box');
+        TaskDialogButton.prepend(addIcon);
 
-            const icon = createElement('i', 'material-icons', buttonInfo.icon);
-            button.prepend(icon);
+        // Add event listener for showing the dialog
+        TaskDialogButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent propagation if nested in other elements
+            const dialog = document.querySelector('#taskDialog');
+            console.log(document.body.innerHTML);
 
-            buttonWrapper.appendChild(button);
+            if (dialog) {
+                dialog.showModal(); // Open the dialog
+            } else {
+                console.error('Dialog element not found');
+            }
         });
 
+        buttonWrapper.appendChild(TaskDialogButton);
+
         return buttonWrapper;
+    }
+
+    createTaskDialog() {
+        // Create dialog element
+        const dialog = createElement('dialog', 'task-dialog', null);
+        dialog.id = 'taskDialog';
+
+        // Create modal content wrapper
+        const modalContent = createElement('div', 'modal-content', null);
+        dialog.appendChild(modalContent);
+
+        // Create modal header with title and close button
+        const modalHeader = createElement('div', 'modal-header', null);
+        const dialogTitle = createElement('h2', null, 'Add New Task');
+        const closeButton = createElement('span', 'close-btn', null);
+        closeButton.innerHTML = '&times;';
+        closeButton.addEventListener('click', () => {
+            dialog.close();
+        });
+
+        modalHeader.appendChild(dialogTitle);
+        modalHeader.appendChild(closeButton);
+        modalContent.appendChild(modalHeader);
+
+        // Create and append the task form to the modal content
+        const taskForm = this.createTaskForm();
+        modalContent.appendChild(taskForm);
+
+        // Append dialog to container
+        this.container.appendChild(dialog);
+
+        // Close dialog when clicking outside of it
+        dialog.addEventListener('click', (event) => {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+
+        return dialog;
+    }
+
+    createTaskForm() {
+        const form = createElement('form', 'task-form', null);
+        form.setAttribute('method', 'dialog');
+        form.id = 'taskForm';
+
+        // Add input fields to the form
+        const taskTitleInput = this.createInputField('taskTitle', 'Title', 'text', true);
+        const taskPrioritySelect = this.createSelectField('taskPriority', ['None', 'High', 'Medium', 'Low'], true);
+        const taskDateInput = this.createInputField('taskDate', 'Date', 'date');
+        const taskDescriptionTextarea = this.createTextareaField('taskDescription', 'Description');
+
+        // Menu with buttons (Cancel, Add Task)
+        const menu = createElement('menu', 'button-menu', null);
+
+        const cancelButton = createElement('button', null, 'Cancel');
+        cancelButton.value = 'cancel';
+        cancelButton.addEventListener('click', () => {
+            event.preventDefault();
+            taskDialog.close();
+        });
+
+        const addButton = createElement('button', null, 'Add Task');
+        addButton.value = 'confirm';
+        addButton.addEventListener('click', (event) => {
+            event.preventDefault();
+    
+            // Gather the task data
+            const taskTitle = taskTitleInput.value.trim();
+            const taskPriority = taskPrioritySelect.value;
+            const taskDate = taskDateInput.value;
+            const taskDescription = taskDescriptionTextarea.value.trim();
+            const taskTag = this.currentProject.name;
+
+            const capitalizeFirstWord = (text) => {
+                return text.charAt(0).toUpperCase() + text.slice(1);
+            };
+            
+            const capitalizedDescription = capitalizeFirstWord(taskDescription);
+    
+            // Make sure all required fields are filled
+            if (!taskTitle) {
+                alert("Please add a Title");
+                return;
+            }
+    
+            // Create the new task for the current project
+            const newTask = new Task(
+                taskTitle,
+                taskPriority,
+                taskDate,
+                capitalizedDescription,
+                taskTag, // Tag can be added later
+                [], // Checklist can be added later
+                this.currentProject // Pass the current project
+            );
+    
+            // Re-render the tasks for the current project
+            this.renderMain(this.currentProject);
+    
+            // Close the dialog
+            taskDialog.close();
+        });
+
+        menu.appendChild(cancelButton);
+        menu.appendChild(addButton);
+
+        // Append fields and buttons to the form
+        form.appendChild(taskTitleInput);
+        form.appendChild(taskPrioritySelect);
+        form.appendChild(taskDateInput);
+        form.appendChild(taskDescriptionTextarea);
+        form.appendChild(menu);
+
+        return form;
+    }
+
+    createInputField(id, placeholder, type, required = false) {
+        const input = createElement('input', null, null);
+        input.type = type;
+        input.id = id;
+        input.name = id;
+        input.placeholder = placeholder;
+        input.required = required;
+        return input;
+    }
+
+    createSelectField(id, options, required = false) {
+        const select = createElement('select', null, null);
+        select.id = id;
+        select.name = id;
+        select.required = required;
+
+        options.forEach(optionText => {
+            const option = createElement('option', null, optionText);
+            option.value = optionText;
+            select.appendChild(option);
+        });
+
+        return select;
+    }
+
+    createTextareaField(id, placeholder) {
+        const textarea = createElement('textarea', null, null);
+        textarea.id = id;
+        textarea.name = id;
+        textarea.placeholder = placeholder;
+        return textarea;
     }
 
     createTaskCard(task, taskIndex) {
@@ -159,6 +313,11 @@ export class RenderDisplay {
         if (task.priority === 'Low') {
             priority.style.color = 'rgb(0, 212, 0)';
             taskCard.style.borderLeft = '10px solid rgba(0, 212, 0, 0.4)';
+        }
+
+        if (task.priority === 'None') {
+            priority.style.color = 'rgba(255, 255, 255, 0.7)';
+            priority.style.display = 'none';
         }
 
 
