@@ -121,13 +121,8 @@ export class RenderDisplay {
         TaskDialogButton.addEventListener('click', (event) => {
             event.stopPropagation(); // Prevent propagation if nested in other elements
             const dialog = document.querySelector('#taskDialog');
-            console.log(document.body.innerHTML);
+            dialog.showModal(); // Open the dialog
 
-            if (dialog) {
-                dialog.showModal(); // Open the dialog
-            } else {
-                console.error('Dialog element not found');
-            }
         });
 
         buttonWrapper.appendChild(TaskDialogButton);
@@ -191,7 +186,6 @@ export class RenderDisplay {
         const cancelButton = createElement('button', null, 'Cancel');
         cancelButton.value = 'cancel';
         cancelButton.addEventListener('click', () => {
-            event.preventDefault();
             taskDialog.close();
         });
 
@@ -217,21 +211,32 @@ export class RenderDisplay {
 
 
             // Create the new task for the current project
-            const newTask = new Task(
-                taskTitle,
-                taskPriority,
-                taskDate,
-                capitalizedDescription,
-                taskTag,
-                [],
-                this.currentProject
-            );
+            if (form.dataset.mode === 'edit' && form.dataset.taskId) {
+                // Update existing task
+                const taskToUpdate = this.currentProject.tasks[form.dataset.taskId];
+                taskToUpdate.title = taskTitle;
+                taskToUpdate.priority = taskPriority;
+                taskToUpdate.date = taskDate;
+                taskToUpdate.description = capitalizedDescription;
 
+                form.dataset.mode = 'add';
+            } else {
+                // Add a new task
+                const newTask = new Task(
+                    taskTitle,
+                    taskPriority,
+                    taskDate,
+                    capitalizedDescription,
+                    taskTag,
+                    [],
+                    this.currentProject
+                );
+            }
 
             // Re-render the tasks for the current project
             this.renderMain(this.currentProject);
 
-            // Close the dialog
+            // Reset and close the dialog
             taskDialog.close();
         });
 
@@ -389,10 +394,16 @@ export class RenderDisplay {
                 button.addEventListener('click', (event) => {
                     // Delete the task
                     const project = this.currentProject;
-                    project.deleteTask(task); 
-    
+                    project.deleteTask(task);
+
                     // Re-render the task list for the project
                     this.renderMain(project);
+                });
+            }
+
+            if (buttonInfo.action === 'edit') {
+                button.addEventListener('click', () => {
+                    this.openEditForm(task);
                 });
             }
 
@@ -487,6 +498,30 @@ export class RenderDisplay {
             listItem.appendChild(deleteButton);
             checklistContainer.appendChild(listItem);
         })
+    }
+
+    openEditForm(task) {
+        const taskTitleInput = document.querySelector('#taskTitle');
+        const taskPrioritySelect = document.querySelector('#taskPriority');
+        const taskDateInput = document.querySelector('#taskDate');
+        const taskDescriptionTextarea = document.querySelector('#taskDescription');
+        const form = document.querySelector('#taskForm');
+    
+        // Pre-populate the form with the task's values
+        taskTitleInput.value = task.title;
+        taskPrioritySelect.value = task.priority;
+        taskDateInput.value = task.date;
+        taskDescriptionTextarea.value = task.description;
+    
+        // Set the form to edit mode
+        form.dataset.mode = 'edit';
+        form.dataset.taskId = this.currentProject.tasks.indexOf(task);
+    
+        const submitButton = form.querySelector('button[value="confirm"]');
+        submitButton.textContent = 'Update Task';
+    
+        const dialog = document.querySelector('#taskDialog');
+        dialog.showModal();
     }
 
     clearDisplay() {
