@@ -27,8 +27,9 @@ export class Project {
         this.tasks.push(task);
     }
 
-    deleteTask(index) {
-        this.tasks.splice(index, 1);
+    deleteTask(task) {
+        const taskIndex = this.tasks.indexOf(task);
+        this.tasks.splice(taskIndex, 1);
     }
 }
 
@@ -41,7 +42,6 @@ export class Task {
         this.tag = tag;
         this.checklist = checklist;
         this.completed = completed;
-
         project.addTask(this);
     }
 
