@@ -296,7 +296,7 @@ export class RenderDisplay {
         const dueDate = createElement('h3', 'due-date', dueDateText);
 
         if (task.isOverdue()) {
-            dueDate.style.color = 'orange'; 
+            dueDate.style.color = 'orange';
         }
 
         leftSection.appendChild(taskTitle);
@@ -375,16 +375,27 @@ export class RenderDisplay {
         buttons.forEach(buttonInfo => {
             const button = document.createElement('button');
             button.setAttribute('data-action', buttonInfo.action);
-    
+
             const icon = createElement('i', 'material-icons', buttonInfo.icon);
             button.appendChild(icon);
-    
+
             if (buttonInfo.action === 'add') {
                 button.addEventListener('click', () => {
                     this.createChecklistForm(task, taskCard.querySelector('.checklist'));
                 });
             }
+
+            if (buttonInfo.action === 'delete') {
+                button.addEventListener('click', (event) => {
+                    // Delete the task
+                    const project = this.currentProject;
+                    project.deleteTask(task); 
     
+                    // Re-render the task list for the project
+                    this.renderMain(project);
+                });
+            }
+
             buttonContainer.appendChild(button);
         });
 
@@ -403,36 +414,36 @@ export class RenderDisplay {
         const form = createElement('form', 'checklist-form', null);
         const inputField = this.createInputField('new-item', 'Add an item...', 'text', true);
 
-    
+
         const cancelButton = createElement('button', 'cancel-checklist-btn', 'Cancel');
         cancelButton.type = 'button';
-    
+
         // Append input and buttons to the form
         form.appendChild(inputField);
         form.appendChild(cancelButton);
-    
+
         checklistContainer.appendChild(form);
-    
+
         // Add event listeners
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             const itemName = capitalizeFirstWord(inputField.value.trim());
-    
+
             if (itemName) {
                 // Add the item to the task checklist
                 task.checklist.push(itemName);
-    
+
                 // Re-render the checklist
                 this.renderChecklist(task, checklistContainer);
             }
         });
-    
+
         cancelButton.addEventListener('click', () => {
             // Re-render the checklist without the form
             this.renderChecklist(task, checklistContainer);
         });
     }
-    
+
     renderChecklist(task, checklistContainer, taskIndex) {
         checklistContainer.innerHTML = '';
 
@@ -441,7 +452,7 @@ export class RenderDisplay {
             placeholderText.style.color = 'var(--txt-secondary)';
             checklistContainer.appendChild(placeholderText);
         }
-    
+
         task.checklist.forEach((item, index) => {
             const listItem = createElement('div', 'list-item', null)
 
@@ -463,10 +474,10 @@ export class RenderDisplay {
             deleteButton.innerHTML = '&times;'
             deleteButton.addEventListener('click', (event) => {
                 event.stopPropagation(); // Prevent triggering the checkbox
-    
+
                 // Remove the item from the checklist
                 task.checklist.splice(index, 1);
-    
+
                 // Re-render the checklist
                 this.renderChecklist(task, checklistContainer);
             });
@@ -499,5 +510,5 @@ function createIcon(iconName) {
 }
 
 function capitalizeFirstWord(text) {
-        return text.charAt(0).toUpperCase() + text.slice(1);
+    return text.charAt(0).toUpperCase() + text.slice(1);
 }
