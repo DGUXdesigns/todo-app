@@ -56,7 +56,6 @@ export class RenderProjectList {
         // Delete the project from the library
         this.projectLibrary.deleteProject(project);
 
-        // this.storage.save(this.projectLibrary.getProjects());
         // Re-render the project list
         this.renderList(this.projectLibrary.getProjects());
 
@@ -313,28 +312,7 @@ export class RenderDisplay {
 
         // Checklist Section
         const checklistContainer = createElement('div', 'checklist', null);
-
-        task.checklist.forEach((item, index) => {
-            const listItem = createElement('div', 'list-item', null)
-
-            const checkboxId = `task-${taskIndex}-item-${index + 1}`;
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = checkboxId;
-
-            const label = document.createElement('label');
-            label.setAttribute('for', checkboxId);
-
-            const customCheckbox = createElement('span', 'custom-checkbox', null);
-            label.appendChild(customCheckbox);
-
-            const labelText = document.createTextNode(item);
-            label.appendChild(labelText);
-
-            listItem.appendChild(checkbox);
-            listItem.appendChild(label);
-            checklistContainer.appendChild(listItem);
-        })
+        this.renderChecklist(task, checklistContainer, taskIndex);
 
         taskCard.appendChild(checklistContainer);
 
@@ -408,6 +386,10 @@ export class RenderDisplay {
     }
 
     createChecklistForm(task, checklistContainer) {
+        if (checklistContainer.querySelector('form')) {
+            return;
+        }
+
         const form = createElement('form', 'checklist-form', null);
         const inputField = this.createInputField('new-item', 'Add an item...', 'text', true);
     
@@ -445,30 +427,43 @@ export class RenderDisplay {
         });
     }
     
-    renderChecklist(task, checklistContainer) {
+    renderChecklist(task, checklistContainer, taskIndex) {
         checklistContainer.innerHTML = '';
     
         task.checklist.forEach((item, index) => {
-            const listItem = createElement('div', 'list-item', null);
-    
-            const checkboxId = `task-${index}-item-${index}`;
+            const listItem = createElement('div', 'list-item', null)
+
+            const checkboxId = `task-${taskIndex + 1}-item-${index + 1}`;
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = checkboxId;
-    
+
             const label = document.createElement('label');
             label.setAttribute('for', checkboxId);
-    
+
             const customCheckbox = createElement('span', 'custom-checkbox', null);
             label.appendChild(customCheckbox);
-    
+
             const labelText = document.createTextNode(item);
             label.appendChild(labelText);
+
+            const deleteButton = createElement('button', 'delete-item-btn', null);
+            deleteButton.innerHTML = '&times;'
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent triggering the checkbox
     
+                // Remove the item from the checklist
+                task.checklist.splice(index, 1);
+    
+                // Re-render the checklist
+                this.renderChecklist(task, checklistContainer);
+            });
+
             listItem.appendChild(checkbox);
             listItem.appendChild(label);
+            listItem.appendChild(deleteButton);
             checklistContainer.appendChild(listItem);
-        });
+        })
     }
 
     clearDisplay() {
