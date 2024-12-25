@@ -141,7 +141,7 @@ export class RenderDisplay {
 
         // Create modal header with title and close button
         const modalHeader = createElement('div', 'modal-header', null);
-        const dialogTitle = createElement('h2', null, 'Add New Task');
+        const dialogTitle = createElement('h2', 'dialog-title', 'Add New Task');
         const closeButton = createElement('span', 'close-btn', null);
         closeButton.innerHTML = '&times;';
         closeButton.addEventListener('click', () => {
@@ -190,26 +190,28 @@ export class RenderDisplay {
         });
 
         const addButton = createElement('button', null, 'Add Task');
+        addButton.type = 'submit'; // Ensure the button submits the form
         addButton.value = 'confirm';
-        addButton.addEventListener('click', (event) => {
+    
+        // Handle form submission
+        form.addEventListener('submit', (event) => {
             event.preventDefault();
-
+    
             // Gather the task data
             const taskTitle = taskTitleInput.value.trim();
             const taskPriority = taskPrioritySelect.value;
             const taskDate = taskDateInput.value;
             const taskDescription = taskDescriptionTextarea.value.trim();
             const taskTag = this.currentProject.name;
-
+    
             const capitalizedDescription = capitalizeFirstWord(taskDescription);
-
+    
             // Make sure all required fields are filled
             if (!taskTitle) {
                 alert("Please add a Title");
                 return;
             }
-
-
+    
             // Create the new task for the current project
             if (form.dataset.mode === 'edit' && form.dataset.taskId) {
                 // Update existing task
@@ -218,7 +220,7 @@ export class RenderDisplay {
                 taskToUpdate.priority = taskPriority;
                 taskToUpdate.date = taskDate;
                 taskToUpdate.description = capitalizedDescription;
-
+    
                 form.dataset.mode = 'add';
             } else {
                 // Add a new task
@@ -232,24 +234,24 @@ export class RenderDisplay {
                     this.currentProject
                 );
             }
-
+    
             // Re-render the tasks for the current project
             this.renderMain(this.currentProject);
-
+    
             // Reset and close the dialog
             taskDialog.close();
         });
 
         menu.appendChild(cancelButton);
         menu.appendChild(addButton);
-
+    
         // Append fields and buttons to the form
         form.appendChild(taskTitleInput);
         form.appendChild(taskPrioritySelect);
         form.appendChild(taskDateInput);
         form.appendChild(taskDescriptionTextarea);
         form.appendChild(menu);
-
+    
         return form;
     }
 
@@ -519,6 +521,9 @@ export class RenderDisplay {
     
         const submitButton = form.querySelector('button[value="confirm"]');
         submitButton.textContent = 'Update Task';
+
+        const dialogTitle = document.querySelector('.dialog-title');
+        dialogTitle.innerHTML = 'Update Task';
     
         const dialog = document.querySelector('#taskDialog');
         dialog.showModal();
