@@ -2,20 +2,18 @@ import { format } from "date-fns";
 import { Task, Checklist } from "./taskSystem";
 
 export class RenderProjectList {
-    constructor(listContainer, renderDisplay, projectLibrary) {
+    constructor(listContainer, renderDisplay, projectLibrary,renderHome) {
         this.container = document.querySelector(listContainer);
         this.renderDisplay = renderDisplay;
         this.projectLibrary = projectLibrary;
+        this.renderHome = renderHome;
     }
 
     renderList(project) {
         this.container.innerHTML = '';
 
         project.forEach((project) => {
-            const listElement = document.createElement('li');
-            listElement.classList.add('list-name');
-            listElement.innerHTML = project.name;
-
+            const listElement = createElement('li', 'list-name', project.name);
             const icon = createIcon('blur_on');
             icon.classList.add('project-icon');
             listElement.prepend(icon);
@@ -58,6 +56,7 @@ export class RenderProjectList {
 
         // Re-render the project list
         this.renderList(this.projectLibrary.getProjects());
+        this.renderHome.updateStats(this.projectLibrary.getProjects());
 
         // Clear the main display if the deleted project is active
         if (this.renderDisplay.currentProject && this.renderDisplay.currentProject.name === project.name) {
@@ -319,7 +318,7 @@ export class RenderDisplay {
 
         // Checklist Section
         const checklistWrapper = createElement('div', 'checklist-wrapper', null);
-        const checklistTitle = createElement('h3', 'checklist-title', 'Things to do:');
+        const checklistTitle = createElement('h3', 'checklist-title', 'Checklist:');
         const checklistContainer = createElement('div', 'checklist', null);
 
         checklistWrapper.appendChild(checklistTitle);
@@ -564,14 +563,14 @@ export class RenderDisplay {
     }
 }
 
-function createElement(element, className, innerText) {
+export function createElement(element, className, innerText) {
     const el = document.createElement(element);
     if (className) el.classList.add(className);
     if (innerText) el.innerText = innerText;
     return el;
 }
 
-function createIcon(iconName) {
+export function createIcon(iconName) {
     const icon = document.createElement('i');
     icon.classList.add('material-icons');
     icon.innerText = iconName;
