@@ -1,13 +1,14 @@
-import { Project, ProjectLibrary } from "./taskSystem";
+import { Project } from "./taskSystem";
 
 export class FormHandler {
-    constructor(formSelector, inputSelector, formContainerSelector, addButtonSelector, projectLibrary, renderProjectList, storage) {
+    constructor(formSelector, inputSelector, formContainerSelector, addButtonSelector, projectLibrary, renderProjectList, renderHome, storage) {
         this.form = document.querySelector(formSelector);
         this.input = document.querySelector(inputSelector);
         this.formContainer = document.querySelector(formContainerSelector);
         this.addButton = document.querySelector(addButtonSelector);
         this.projectLibrary = projectLibrary;
         this.renderProjectList = renderProjectList;
+        this.renderHome = renderHome;
         this.storage = storage;
 
         this.addEventListeners();
@@ -30,7 +31,7 @@ export class FormHandler {
 
     handleFormSubmit(event) {
         event.preventDefault();
-    
+
         const projectName = this.input.value.trim();
         if (!projectName) return;
 
@@ -38,13 +39,14 @@ export class FormHandler {
             // Create a new project and add it to the project library
             const newProject = new Project(projectName, this.projectLibrary);
             this.projectLibrary.addNewProject(newProject);
-    
+
             // Save the updated projects to localStorage
             this.storage.save(this.projectLibrary.getProjects());
-    
+
             // Re-render the project list
             this.renderProjectList.renderList(this.projectLibrary.getProjects());
-    
+            this.renderHome.updateStats(this.projectLibrary.getProjects());
+
             // Clear the input and hide the form
             this.input.value = '';
             this.hideForm();
