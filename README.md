@@ -64,4 +64,4 @@ To run the app locally:
 - **Task Notifications**: Implement notifications for overdue tasks or upcoming deadlines.
 - **Drag-and-Drop**: Allow users to reorder tasks or projects using drag-and-drop functionality.
 - **Task Search**: Implement a search feature to filter tasks by title, project, or priority.
-- **Resonsiveness**: Implement responsive design so app can be used on any device.
+- **Responsiveness**: Implement responsive design so app can be used on any device.
