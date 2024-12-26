@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Task } from "./taskSystem";
+import { Task, Checklist } from "./taskSystem";
 
 export class RenderProjectList {
     constructor(listContainer, renderDisplay, projectLibrary) {
@@ -393,7 +393,7 @@ export class RenderDisplay {
             }
 
             if (buttonInfo.action === 'delete') {
-                button.addEventListener('click', (event) => {
+                button.addEventListener('click', () => {
                     // Delete the task
                     const project = this.currentProject;
                     project.deleteTask(task);
@@ -444,7 +444,8 @@ export class RenderDisplay {
 
             if (itemName) {
                 // Add the item to the task checklist
-                task.checklist.push(itemName);
+                const newItem = new Checklist(itemName, false, task);
+                task.addListItem(newItem);
 
                 // Re-render the checklist
                 this.renderChecklist(task, checklistContainer);
@@ -473,6 +474,7 @@ export class RenderDisplay {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = checkboxId;
+            checkbox.checked = item.completed;
 
             const label = document.createElement('label');
             label.setAttribute('for', checkboxId);
@@ -480,7 +482,7 @@ export class RenderDisplay {
             const customCheckbox = createElement('span', 'custom-checkbox', null);
             label.appendChild(customCheckbox);
 
-            const labelText = document.createTextNode(item);
+            const labelText = document.createTextNode(item.text);
             label.appendChild(labelText);
 
             const deleteButton = createElement('button', 'delete-item-btn', null);
@@ -494,6 +496,11 @@ export class RenderDisplay {
                 // Re-render the checklist
                 this.renderChecklist(task, checklistContainer);
             });
+
+            // Update checklist state on change
+            checkbox.addEventListener('change', () => {
+                    item.completed = checkbox.checked
+            })
 
             listItem.appendChild(checkbox);
             listItem.appendChild(label);
