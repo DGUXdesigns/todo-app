@@ -409,6 +409,29 @@ export class RenderDisplay {
                 });
             }
 
+            if (buttonInfo.action === 'complete') {
+                button.addEventListener('click', () => {
+                    const allCompleted = task.checklist.every(item => item.completed);
+
+                    if (allCompleted) {
+                        task.checklist.forEach(item => {
+                            item.completed = false;
+                        });
+                        icon.textContent = 'assignment_turned_in';
+                    } else {
+                        task.checklist.forEach(item => {
+                            item.completed = true;
+                        });
+                        icon.textContent = 'assignment_return';
+
+                    }
+    
+                    const checklistContainer = taskCard.querySelector('.checklist');
+                    this.renderChecklist(task, checklistContainer);
+                });
+            }
+
+
             buttonContainer.appendChild(button);
         });
 
