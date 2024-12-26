@@ -42,6 +42,7 @@ export class Task {
         this.tag = tag;
         this.checklist = checklist;
         this.completed = completed;
+
         project.addTask(this);
     }
 
@@ -54,6 +55,13 @@ export class Task {
 
     addListItem(item) {
         this.checklist.push(item);
+    }
+}
+
+export class Checklist {
+    constructor(text, completed = false, task) {
+        this.text = text;
+        this.completed = completed;
     }
 }
 
