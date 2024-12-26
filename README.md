@@ -31,24 +31,11 @@ The goal of this project is to demonstrate proficiency in frontend development a
 - **JSON**: For saving task and project data to local storage, ensuring data persists across sessions.
 
 ## How to Use 🛠️
+1 **Create a new project**: Click on the "Add Project" button to create a new project.
 
-1. Clone the repository:
-    ```bash
-    git clone git@github.com:your-username/todo-list-app.git
-    ```
+2 **Add tasks**: Within each project, you can add tasks, set priorities, and specify due dates.
 
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-
-3. Open the app in a browser.
-
-4. **Create a new project**: Click on the "Add Project" button to create a new project.
-
-5. **Add tasks**: Within each project, you can add tasks, set priorities, and specify due dates.
-
-5. **Manage data**: Projects and tasks are saved to local storage using JSON, so your progress is saved between sessions.
+3 **Manage data**: Projects and tasks are saved to local storage using JSON, so your progress is saved between sessions.
 
 ## Installation ⚡
 
