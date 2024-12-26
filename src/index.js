@@ -3,6 +3,7 @@ import { ProjectLibrary, Project, Task } from './scripts/taskSystem';
 import { Storage } from './scripts/storage';
 import { RenderProjectList, RenderDisplay } from './scripts/render';
 import { FormHandler } from './scripts/FormHandler';
+import { RenderHome } from './scripts/renderHomePage';
 
 // Initialize
 const LOCAL_STORAGE_KEY = 'myProjects';
@@ -29,7 +30,6 @@ if (savedProjects) {
                     savedTask.completed
                 );
             });
-
         } else {
             console.error('Invalid project data found:', savedProject);
         }
@@ -37,10 +37,12 @@ if (savedProjects) {
 }
 
 // Start Rendering
-const projectList = new RenderProjectList('[data-projects]', new RenderDisplay('[data-main]'), myProjects);
+const home = new RenderHome(document.querySelector('[data-main]'));
+const projectList = new RenderProjectList('[data-projects]', new RenderDisplay('[data-main]'), myProjects, home);
 
 // Render the loaded projects
 projectList.renderList(myProjects.getProjects());
+home.renderHome(myProjects.getProjects());
 
 // Initialize FormHandler for new project creation
 new FormHandler(
@@ -50,8 +52,16 @@ new FormHandler(
     'button',
     myProjects,
     projectList,
+    home,
     storage
 );
+
+// buttons
+const homeButton = document.querySelector('[data-home-button]')
+
+homeButton.addEventListener('click', () => {
+    home.renderHome(myProjects.getProjects());
+})
 
 // Save data when a project or task changes
 window.addEventListener('beforeunload', () => {
